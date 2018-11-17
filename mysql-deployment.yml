@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  labels:
+    app: loginwebapp-application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: mysql-pod
+      app: loginwebapp-application
+  template:
+    metadata:
+      name: mysqldb
+      labels:
+        name: mysql-pod
+        app: loginwebapp-application
+    spec:
+      containers:
+      - name: mysql
+        image: adarshnagaraj22/mysql:1.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: persistent-volume
+          mountPath: /var/lib/mysql
+      nodeSelector:
+        type: backend
+      volumes:
+      - name: persistent-volume
+        hostPath:
+          path: /var/mysql_data_backup
+          type: DirectoryOrCreate
